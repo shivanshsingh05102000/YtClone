@@ -1,0 +1,86 @@
+# ── Environment Variables ─────────────────────────────
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+# ── Node Modules ──────────────────────────────────────
+node_modules/
+**/node_modules/
+
+# ── Logs ──────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ── OS Files ──────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── IDE / Editor ──────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+
+# ── Build Output ──────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# ── Cache ─────────────────────────────────────────────
+.npm/
+.eslintcache
+.parcel-cache/
+.cache/
+*.tsbuildinfo
+
+# ── Testing ───────────────────────────────────────────
+coverage/
+*.lcov
+.nyc_output/
+
+# ── Package locks (keep package-lock.json) ────────────
+yarn.lock
+pnpm-lock.yaml
+
+# ── Uploads / Media ───────────────────────────────────
+uploads/
+temp/
+tmp/
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# ── Database ──────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Docker ────────────────────────────────────────────
+.docker/
+
+# ── Misc ──────────────────────────────────────────────
+*.pem
+*.key
+*.cert
+*.p12
+.vercel
+.netlify
