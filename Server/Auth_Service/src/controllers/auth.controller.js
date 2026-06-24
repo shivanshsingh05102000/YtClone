@@ -18,6 +18,17 @@ export const register = asyncHandler(async (req, res) => {
   if (!username || !email || !password) {
     throw new ApiError(400, 'username, email, and password are all required');
   }
+  // Reject non-string fields before they ever reach a Mongoose query. Without
+  // this, a body like { "email": { "$ne": null } } would be cast by
+  // Mongoose into a literal query operator (sanitizeFilter is off by
+  // default), matching arbitrary documents instead of failing safely.
+  if (
+    typeof username !== 'string' ||
+    typeof email !== 'string' ||
+    typeof password !== 'string'
+  ) {
+    throw new ApiError(400, 'username, email, and password must be strings');
+  }
   if (password.length < 8) {
     throw new ApiError(400, 'Password must be at least 8 characters');
   }
@@ -53,6 +64,9 @@ export const login = asyncHandler(async (req, res) => {
   if (!email || !password) {
     throw new ApiError(400, 'email and password are required');
   }
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    throw new ApiError(400, 'email and password must be strings');
+  }
 
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
@@ -72,6 +86,12 @@ export const login = asyncHandler(async (req, res) => {
 
   logger.info('User logged in', { requestId: req.requestId, userId: user._id.toString() });
 
+  // Tokens are delivered via httpOnly cookies only — not echoed in the JSON
+  // body. Returning them in both places means an XSS bug anywhere on the
+  // frontend can read the token straight out of the fetch response, which
+  // defeats the point of httpOnly. Clients that need the access token for
+  // an Authorization header (e.g. a mobile app) should read it from here;
+  // browser clients should rely on the cookie and never touch this field.
   res
     .status(200)
     .cookie('accessToken', accessToken, {
@@ -85,8 +105,6 @@ export const login = asyncHandler(async (req, res) => {
     .json({
       success: true,
       message: 'Login successful',
-      accessToken,
-      refreshToken,
       user: {
         id: user._id,
         username: user.username,
@@ -150,8 +168,6 @@ export const refresh = asyncHandler(async (req, res) => {
     .json({
       success: true,
       message: 'Token refreshed',
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
     });
 });
 
